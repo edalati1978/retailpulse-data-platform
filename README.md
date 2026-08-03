@@ -31,3 +31,44 @@ retailpulse-data-platform/
 |-- tests/
 `-- README.md
 ```
+
+## Prerequisites
+
+The current Phase 0 baseline uses:
+
+- Git
+- GitHub
+- PowerShell
+- Docker Desktop
+
+Additional project tools will be introduced in their relevant phases.
+
+## Quick Start
+
+1. Clone the repository.
+2. Enter the repository directory.
+3. Confirm that the local branch is synchronized with GitHub.
+
+```powershell
+git clone https://github.com/edalati1978/retailpulse-data-platform.git
+cd retailpulse-data-platform
+git status
+```
+
+## Commands
+
+```powershell
+git status
+git log -1 --oneline
+git remote -v
+```
+
+## Architecture
+
+The detailed platform architecture will be documented as the implementation progresses through its defined phases.
+
+## Current Phase
+
+Phase 0: Baseline and Governance
+
+Current step: Documentation and collaboration rules.
