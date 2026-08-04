@@ -55,6 +55,17 @@ cd retailpulse-data-platform
 git status
 ```
 
+### Python Environment on PowerShell
+
+From the repository root, allow scripts for the current PowerShell window and activate the virtual environment:
+
+```powershell
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass -Force
+.\.venv\Scripts\Activate.ps1
+```
+
+A successful activation adds `(.venv)` to the beginning of the PowerShell prompt.
+
 ## Commands
 
 ```powershell
@@ -72,3 +83,4 @@ The detailed platform architecture will be documented as the implementation prog
 Phase 0: Baseline and Governance
 
 Current step: Documentation and collaboration rules.
+
