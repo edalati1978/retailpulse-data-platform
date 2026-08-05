@@ -1,18 +1,27 @@
-﻿# RetailPulse Data Platform
+# RetailPulse Data Platform
 
-RetailPulse is an end-to-end AWS retail and fulfillment data platform portfolio project.
+RetailPulse is an end-to-end AWS retail and fulfillment data engineering portfolio project.
 
 ## Project Goal
 
-The project demonstrates the design and implementation of a data platform for an omnichannel retail business, including store sales, online activity, orders, inventory, fulfillment, and analytics.
+The project demonstrates the design and implementation of a data platform for an
+omnichannel retail business, including sales, online activity, orders, inventory,
+fulfillment, and analytics.
 
-## Scope
+All operational data used by the project is synthetic or explicitly identified as
+benchmark data.
 
-Version 1.0 focuses on the AWS-based core platform defined in the project master design.
+## Architecture Approach
 
-## Data Notice
+AWS is the target platform for the production architecture.
 
-All generated operational data and benchmark datasets used in this project are synthetic or explicitly identified as benchmark data. This project does not claim production-scale experience.
+Docker Compose, PostgreSQL, Airflow, Python, and PowerShell provide the reproducible
+local development and smoke-test baseline.
+
+See:
+
+- [ADR-0001: AWS-First Architecture with Local-First Development](docs/adr/ADR-0001-aws-first-local-first.md)
+- [Secret Management Policy](docs/secret-policy.md)
 
 ## Repository Structure
 
@@ -23,64 +32,135 @@ retailpulse-data-platform/
 |   `-- workflows/
 |-- airflow/
 |   `-- dags/
+|-- docker/
+|   `-- postgres/
+|       `-- init/
 |-- docs/
 |   |-- adr/
 |   `-- checkpoints/
-|-- postgres/
 |-- scripts/
 |-- tests/
+|-- .env.example
+|-- docker-compose.yml
+|-- pyproject.toml
 `-- README.md
 ```
 
 ## Prerequisites
 
-The current Phase 0 baseline uses:
+Install the following tools before running the project:
 
 - Git
-- GitHub
+- Python 3.12
 - PowerShell
 - Docker Desktop
 
-Additional project tools will be introduced in their relevant phases.
+Docker Desktop must be running.
 
 ## Quick Start
 
-1. Clone the repository.
-2. Enter the repository directory.
-3. Confirm that the local branch is synchronized with GitHub.
+Clone the repository and enter its directory:
 
 ```powershell
 git clone https://github.com/edalati1978/retailpulse-data-platform.git
 cd retailpulse-data-platform
-git status
 ```
 
-### Python Environment on PowerShell
-
-From the repository root, allow scripts for the current PowerShell window and activate the virtual environment:
+Allow local scripts for the current PowerShell window:
 
 ```powershell
 Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass -Force
-.\.venv\Scripts\Activate.ps1
 ```
 
-A successful activation adds `(.venv)` to the beginning of the PowerShell prompt.
-
-## Commands
+Create the Python environment, install development dependencies, create the local
+environment file, and start PostgreSQL and Airflow:
 
 ```powershell
-git status
-git log -1 --oneline
-git remote -v
+.\scripts\setup.ps1
 ```
 
-## Architecture
+The setup command waits until both Docker services are healthy.
 
-The detailed platform architecture will be documented as the implementation progresses through its defined phases.
+## Run Tests
+
+Run the complete local smoke-test suite:
+
+```powershell
+.\scripts\test.ps1
+```
+
+The test command checks:
+
+- Python 3.12
+- Pytest
+- Ruff
+- Docker Compose configuration
+- PostgreSQL smoke data
+- Airflow smoke DAG
+
+A successful run ends with:
+
+```text
+All RetailPulse tests passed.
+```
+
+## Airflow
+
+Open the local Airflow interface:
+
+```text
+http://localhost:8080
+```
+
+The smoke DAG is named:
+
+```text
+retailpulse_smoke
+```
+
+Airflow authentication credentials are generated locally and are not committed to Git.
+
+## Clean Local Services
+
+Stop and remove local containers and temporary caches:
+
+```powershell
+.\scripts\clean.ps1
+```
+
+This command preserves Docker volumes, PostgreSQL data, Airflow data, the local `.env`
+file, and the Python virtual environment.
+
+Start the environment again with:
+
+```powershell
+.\scripts\setup.ps1
+```
+
+## Environment and Secrets
+
+Copy `.env.example` to `.env` only for local use.
+
+The setup script performs this copy automatically when `.env` does not exist.
+
+Never commit:
+
+- `.env`
+- passwords
+- access keys
+- tokens
+- private credentials
+
+## Continuous Integration
+
+GitHub Actions runs the following checks on pushes and pull requests targeting `main`:
+
+- Pytest
+- Ruff
+- Docker Compose configuration validation
 
 ## Current Phase
 
 Phase 0: Baseline and Governance
 
-Current step: Documentation and collaboration rules.
-
+Status: final validation and closure.

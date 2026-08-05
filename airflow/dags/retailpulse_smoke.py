@@ -1,7 +1,8 @@
-from datetime import datetime
+from datetime import UTC, datetime
+
+from airflow.providers.standard.operators.python import PythonOperator
 
 from airflow import DAG
-from airflow.providers.standard.operators.python import PythonOperator
 
 
 def run_smoke_test() -> None:
@@ -10,7 +11,7 @@ def run_smoke_test() -> None:
 
 with DAG(
     dag_id="retailpulse_smoke",
-    start_date=datetime(2026, 1, 1),
+    start_date=datetime(2026, 1, 1, tzinfo=UTC),
     schedule=None,
     catchup=False,
     tags=["retailpulse", "smoke"],
@@ -19,3 +20,4 @@ with DAG(
         task_id="run_smoke_test",
         python_callable=run_smoke_test,
     )
+
