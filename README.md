@@ -163,4 +163,4 @@ GitHub Actions runs the following checks on pushes and pull requests targeting `
 
 Phase 0: Baseline and Governance
 
-Status: final validation and closure.
+Status: complete.
