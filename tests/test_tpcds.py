@@ -1,6 +1,5 @@
 from pathlib import Path
 
-
 SAMPLES_DIR = Path(__file__).resolve().parents[1] / "tpcds" / "samples"
 
 EXPECTED_SAMPLE_FILES = [
