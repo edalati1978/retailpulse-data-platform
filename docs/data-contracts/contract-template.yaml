@@ -1,0 +1,84 @@
+contract_version: "1.0.0"
+
+source:
+  name: ""
+  type: ""
+  purpose: ""
+  owner: ""
+  environment: ""
+
+entity:
+  name: ""
+  grain: ""
+
+keys:
+  primary_key: []
+  business_key: []
+  event_id: null
+  batch_id: null
+
+schema:
+  fields:
+    - name: ""
+      type: ""
+      nullable: true
+      description: ""
+      allowed_values: []
+      example: null
+
+timestamps:
+  created_at: null
+  updated_at: null
+  event_time: null
+  timezone: "UTC"
+
+schema_versioning:
+  current_version: "1.0.0"
+  compatibility_policy: ""
+  breaking_change_policy: ""
+
+delivery:
+  mode: ""
+  cadence: ""
+  format: ""
+  pagination: null
+  rate_limit: null
+  timeout_seconds: null
+  retry_policy: ""
+  cache_policy: null
+
+quality:
+  required_fields: []
+  unique_fields: []
+  null_policy: ""
+  validity_rules: []
+  freshness_expectation: ""
+
+failure_and_recovery:
+  failure_modes: []
+  retryable_errors: []
+  duplicate_behavior: ""
+  replay_expectation: ""
+
+security:
+  classification: ""
+  contains_pii: false
+  synthetic_or_public: ""
+  secret_requirements: ""
+  retention_policy: ""
+
+metadata:
+  source_system: null
+  ingestion_timestamp: null
+  event_id_or_batch_id: null
+  source_offset_or_source_file: null
+  schema_version: null
+  pipeline_run_id: null
+  record_hash: null
+  event_timestamp: null
+
+samples:
+  sample_file: ""
+  downstream_consumers: []
+
+limitations: []

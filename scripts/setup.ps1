@@ -76,7 +76,7 @@ try {
     }
 
     & $venvPython -m pip install --upgrade pip
-    & $venvPython -m pip install pytest==9.1.1 ruff==0.16.1
+    & $venvPython -m pip install pytest==9.1.1 ruff==0.16.1 PyYAML==6.0.3
 
     if (-not (Test-Path $envFile)) {
         Copy-Item $envExample $envFile

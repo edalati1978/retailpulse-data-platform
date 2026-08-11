@@ -1,0 +1,89 @@
+contract_version: "1.0.0"
+
+source:
+  name: "tpcds"
+  type: "batch"
+  purpose: "Synthetic historical retail data for sales, customer, inventory, and channel analysis."
+  owner: "retailpulse"
+  environment: "local"
+
+entity:
+  name: "selected_tpcds_tables"
+  grain: "varies by table; documented in docs/data-contracts/data-dictionary.md"
+
+keys:
+  primary_key: []
+  business_key: []
+  event_id: null
+  batch_id: null
+
+schema:
+  fields: []
+
+timestamps:
+  created_at: null
+  updated_at: null
+  event_time: null
+  timezone: null
+
+schema_versioning:
+  current_version: "4.0.0"
+  compatibility_policy: "TPC-DS toolkit schema is treated as the source of truth."
+  breaking_change_policy: "Toolkit or selected-table schema changes require a contract version update."
+
+delivery:
+  mode: "batch"
+  cadence: "on_demand"
+  format: "pipe_delimited_dat"
+  pagination: null
+  rate_limit: null
+  timeout_seconds: null
+  retry_policy: "regenerate using the recorded toolkit version and scale factor"
+  cache_policy: null
+
+quality:
+  required_fields: []
+  unique_fields: []
+  null_policy: "table-specific; defined by the official TPC-DS schema"
+  validity_rules:
+    - "required selected tables must be present"
+    - "generated structure must match the recorded TPC-DS schema"
+  freshness_expectation: "not applicable; synthetic benchmark data"
+
+failure_and_recovery:
+  failure_modes:
+    - "generation failure"
+    - "missing selected table"
+    - "schema mismatch"
+  retryable_errors:
+    - "generation failure"
+  duplicate_behavior: "deterministic regeneration with the same toolkit version and scale factor is expected to reproduce the same structure"
+  replay_expectation: "full batch can be regenerated"
+
+security:
+  classification: "public_synthetic"
+  contains_pii: false
+  synthetic_or_public: "synthetic benchmark data"
+  secret_requirements: "none"
+  retention_policy: "large generated files remain local and are excluded from Git"
+
+metadata:
+  source_system: "TPC-DS Tools v4.0.0"
+  ingestion_timestamp: null
+  event_id_or_batch_id: null
+  source_offset_or_source_file: "tpcds/sample/*.dat"
+  schema_version: "TPC-DS Tools v4.0.0"
+  pipeline_run_id: null
+  record_hash: null
+  event_timestamp: null
+
+samples:
+  sample_file: "tpcds/samples/"
+  downstream_consumers:
+    - "Phase 1 documentation and review"
+    - "planned contract/schema tests"
+
+limitations:
+  - "Synthetic benchmark data, not production retail data."
+  - "Scale factor 1."
+  - "Only selected RetailPulse tables are included."
