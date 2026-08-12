@@ -80,3 +80,17 @@ Create the Phase 1 source inventory and:
 
 `docs/data-contracts/contract-template.yaml`
 
+
+## TPC-DS Source Status
+
+Status: Complete
+
+- Official TPC-DS v4.0.0 toolkit used as the schema source.
+- Eight selected table sample fixtures are available under `tpcds/samples/`.
+- Each sample fixture contains 5 rows for local development and CI.
+- Pytest verifies required sample files exist.
+- Pytest verifies each sample file contains exactly 5 rows.
+- Pytest verifies each sample row has the expected field count from the official `tpcds.sql` DDL.
+- TPC-DS tests currently pass: 3 passed.
+- Large generated TPC-DS data and toolkit artifacts remain local/ignored rather than committed to Git.
+
