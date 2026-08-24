@@ -3,10 +3,9 @@
 import argparse
 import csv
 import random
-from datetime import datetime, timedelta, timezone
-from decimal import Decimal, ROUND_HALF_UP
+from datetime import UTC, datetime, timedelta
+from decimal import ROUND_HALF_UP, Decimal
 from pathlib import Path
-
 
 DEFAULT_SEED = 42
 DEFAULT_CUSTOMERS = 100
@@ -85,7 +84,7 @@ def generate_inventory(
     for product_id in range(1, product_count + 1):
         quantity_on_hand = rng.randint(0, 500)
 
-        raw_price = Decimal(rng.randint(499, 49999)) / Decimal("100")
+        raw_price = Decimal(rng.randint(499, 49999)) / Decimal(100)
         current_unit_price = money(raw_price)
         prices[product_id] = current_unit_price
 
@@ -167,7 +166,7 @@ def generate_orders_and_items(
 
 
 def write_load_sql(output_dir: Path) -> None:
-    load_sql = f"""\\set ON_ERROR_STOP on
+    load_sql = """\\set ON_ERROR_STOP on
 
 BEGIN;
 
@@ -243,7 +242,7 @@ def main() -> None:
     output_dir.mkdir(parents=True, exist_ok=True)
 
     rng = random.Random(args.seed)
-    base_time = datetime(2026, 8, 1, 0, 0, tzinfo=timezone.utc)
+    base_time = datetime(2026, 8, 1, 0, 0, tzinfo=UTC)
 
     customers_path = output_dir / "customers.csv"
     inventory_path = output_dir / "inventory.csv"
