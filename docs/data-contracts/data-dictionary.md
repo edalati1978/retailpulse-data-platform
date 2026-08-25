@@ -289,3 +289,90 @@
 | sr_reversed_charge | decimal(7,2) | Yes |
 | sr_store_credit | decimal(7,2) | Yes |
 | sr_net_loss | decimal(7,2) | Yes |
+
+## PostgreSQL OLTP
+
+### customers
+
+**Source:** RetailPulse synthetic PostgreSQL OLTP (`postgres/schema.sql`)
+
+**Grain:** One row per customer.
+
+**Primary key:** `customer_id`
+
+**Business key:** `customer_number`
+
+| Column | Type | Nullable |
+|---|---|---|
+| customer_id | bigint | No |
+| customer_number | varchar(20) | No |
+| first_name | varchar(50) | No |
+| last_name | varchar(50) | No |
+| email | varchar(255) | No |
+| created_at | timestamptz | No |
+| updated_at | timestamptz | No |
+
+### inventory
+
+**Source:** RetailPulse synthetic PostgreSQL OLTP (`postgres/schema.sql`)
+
+**Grain:** One row per product/SKU representing its current inventory state.
+
+**Primary key:** `product_sku`
+
+**Business key:** `product_sku`
+
+| Column | Type | Nullable |
+|---|---|---|
+| product_sku | varchar(50) | No |
+| product_name | varchar(150) | No |
+| quantity_on_hand | integer | No |
+| current_unit_price | numeric(12,2) | No |
+| created_at | timestamptz | No |
+| updated_at | timestamptz | No |
+
+### orders
+
+**Source:** RetailPulse synthetic PostgreSQL OLTP (`postgres/schema.sql`)
+
+**Grain:** One row per order.
+
+**Primary key:** `order_id`
+
+**Business key:** `order_number`
+
+**Foreign key:** `customer_id` → `customers.customer_id`
+
+| Column | Type | Nullable |
+|---|---|---|
+| order_id | bigint | No |
+| order_number | varchar(20) | No |
+| customer_id | bigint | No |
+| order_status | varchar(20) | No |
+| order_total | numeric(12,2) | No |
+| currency_code | varchar(3) | No |
+| created_at | timestamptz | No |
+| updated_at | timestamptz | No |
+
+### order_items
+
+**Source:** RetailPulse synthetic PostgreSQL OLTP (`postgres/schema.sql`)
+
+**Grain:** One row per line item within an order.
+
+**Primary key:** `order_item_id`
+
+**Business key:** Not separately defined.
+
+**Foreign keys:**  
+`order_id` → `orders.order_id`  
+`product_sku` → `inventory.product_sku`
+
+| Column | Type | Nullable |
+|---|---|---|
+| order_item_id | bigint | No |
+| order_id | bigint | No |
+| product_sku | varchar(50) | No |
+| quantity | integer | No |
+| unit_price | numeric(12,2) | No |
+| created_at | timestamptz | No |
