@@ -1,0 +1,97 @@
+contract_version: "1.0.0"
+
+source:
+  name: "postgres_oltp"
+  type: "postgresql"
+  purpose: "Synthetic operational retail source for customer, order, order-item, and inventory changes."
+  owner: "retailpulse"
+  environment: "local"
+
+entity:
+  name: "retailpulse_oltp_tables"
+  grain: "varies by table; documented in docs/data-contracts/data-dictionary.md"
+
+keys:
+  primary_key: []
+  business_key: []
+  event_id: null
+  batch_id: null
+
+schema:
+  fields: []
+
+timestamps:
+  created_at: "table-specific created_at column"
+  updated_at: "customers, orders, and inventory"
+  event_time: null
+  timezone: "UTC"
+
+schema_versioning:
+  current_version: "1.0.0"
+  compatibility_policy: "Existing table grains, keys, and required fields should remain backward compatible within Phase 1."
+  breaking_change_policy: "Breaking schema changes require a contract version update and corresponding data-dictionary update."
+
+delivery:
+  mode: "relational_database"
+  cadence: "on_demand"
+  format: "postgresql_tables"
+  pagination: null
+  rate_limit: null
+  timeout_seconds: null
+  retry_policy: "reset and reload the deterministic seed dataset when a clean source state is required"
+  cache_policy: null
+
+quality:
+  required_fields: []
+  unique_fields: []
+  null_policy: "NOT NULL constraints are defined in postgres/schema.sql"
+  validity_rules:
+    - "primary and foreign key constraints must pass"
+    - "quantity_on_hand must be non-negative"
+    - "order item quantity must be greater than zero"
+    - "prices and order totals must be non-negative"
+    - "order_status must use an allowed status value"
+    - "currency_code must be USD"
+    - "order_total must equal the sum of quantity multiplied by unit_price across its order items"
+  freshness_expectation: "No production freshness SLA in Phase 1; updated_at records modeled operational changes."
+
+failure_and_recovery:
+  failure_modes:
+    - "schema creation failure"
+    - "seed generation failure"
+    - "seed load failure"
+    - "constraint violation"
+  retryable_errors:
+    - "seed generation failure"
+    - "seed load failure"
+  duplicate_behavior: "clean seed reload truncates OLTP tables and restarts identities before loading deterministic data"
+  replay_expectation: "the full baseline dataset can be regenerated and reloaded using seed 42"
+
+security:
+  classification: "synthetic"
+  contains_pii: false
+  synthetic_or_public: "synthetic retail data"
+  secret_requirements: "PostgreSQL credentials are provided through local environment configuration and are not committed as real secrets"
+  retention_policy: "Phase 1 synthetic seed files may be versioned with the project repository"
+
+metadata:
+  source_system: "RetailPulse synthetic PostgreSQL OLTP"
+  ingestion_timestamp: null
+  event_id_or_batch_id: null
+  source_offset_or_source_file: "postgres/generated/"
+  schema_version: "1.0.0"
+  pipeline_run_id: null
+  record_hash: null
+  event_timestamp: null
+
+samples:
+  sample_file: "postgres/generated/"
+  downstream_consumers:
+    - "Phase 1 source validation and documentation"
+    - "planned Raw Ingestion phase"
+
+limitations:
+  - "Synthetic data only; no real customer PII."
+  - "Single-currency model using USD."
+  - "Inventory represents one global current state per SKU."
+  - "Real CDC is not implemented in Phase 1."
