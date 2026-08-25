@@ -376,3 +376,75 @@
 | quantity | integer | No |
 | unit_price | numeric(12,2) | No |
 | created_at | timestamptz | No |
+
+## RetailPulse Events
+
+**Source:** RetailPulse synthetic event source (`streaming/event.schema.json`)
+
+**Grain:** One JSON message represents one event occurrence.
+
+**Event identifier:** `event_id`
+
+### Common event envelope
+
+| Field | Type | Nullable | Description |
+|---|---|---|---|
+| event_id | string (UUID) | No | Unique identifier for one event. |
+| event_type | string | No | Type of event: click, cart, checkout, payment_status, or order_status. |
+| schema_version | string | No | Version of the event schema. Current version is 1.0.0. |
+| event_time | datetime | No | UTC timestamp when the event occurred. |
+| producer | string | No | System or component that produced the event. |
+| payload | object | No | Event-specific attributes. |
+
+### click payload
+
+**Grain:** One user click on a product.
+
+| Field | Type | Nullable |
+|---|---|---|
+| customer_number | string | No |
+| product_sku | string | No |
+| page | string | No |
+
+### cart payload
+
+**Grain:** One cart modification event.
+
+| Field | Type | Nullable |
+|---|---|---|
+| customer_number | string | No |
+| product_sku | string | No |
+| quantity | integer | No |
+| action | string (`add` or `remove`) | No |
+
+### checkout payload
+
+**Grain:** One checkout event for an order.
+
+| Field | Type | Nullable |
+|---|---|---|
+| customer_number | string | No |
+| order_number | string | No |
+| total_amount | number | No |
+| currency_code | string (`USD`) | No |
+
+### payment_status payload
+
+**Grain:** One payment-status event for an order.
+
+| Field | Type | Nullable |
+|---|---|---|
+| order_number | string | No |
+| payment_status | string (`pending`, `succeeded`, `failed`) | No |
+| amount | number | No |
+| currency_code | string (`USD`) | No |
+
+### order_status payload
+
+**Grain:** One order-status change event.
+
+| Field | Type | Nullable |
+|---|---|---|
+| order_number | string | No |
+| previous_status | string | No |
+| new_status | string | No |

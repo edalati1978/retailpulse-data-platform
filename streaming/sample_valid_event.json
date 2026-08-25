@@ -1,0 +1,12 @@
+{
+  "event_id": "550e8400-e29b-41d4-a716-446655440000",
+  "event_type": "click",
+  "schema_version": "1.0.0",
+  "event_time": "2026-08-25T18:00:00Z",
+  "producer": "retailpulse_web",
+  "payload": {
+    "customer_number": "CUST-00000022",
+    "product_sku": "SKU-00000013",
+    "page": "product_detail"
+  }
+}

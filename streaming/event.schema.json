@@ -1,0 +1,252 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "RetailPulse Event",
+  "type": "object",
+  "properties": {
+    "event_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "event_type": {
+      "type": "string",
+      "enum": [
+        "click",
+        "cart",
+        "checkout",
+        "payment_status",
+        "order_status"
+      ]
+    },
+    "schema_version": {
+      "type": "string",
+      "const": "1.0.0"
+    },
+    "event_time": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "producer": {
+      "type": "string",
+      "minLength": 1
+    },
+    "payload": {
+      "type": "object"
+    }
+  },
+  "required": [
+    "event_id",
+    "event_type",
+    "schema_version",
+    "event_time",
+    "producer",
+    "payload"
+  ],
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "event_type": {
+            "const": "click"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "type": "object",
+            "properties": {
+              "customer_number": {
+                "type": "string"
+              },
+              "product_sku": {
+                "type": "string"
+              },
+              "page": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "customer_number",
+              "product_sku",
+              "page"
+            ],
+            "additionalProperties": false
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "event_type": {
+            "const": "cart"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "type": "object",
+            "properties": {
+              "customer_number": {
+                "type": "string"
+              },
+              "product_sku": {
+                "type": "string"
+              },
+              "quantity": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "action": {
+                "type": "string",
+                "enum": [
+                  "add",
+                  "remove"
+                ]
+              }
+            },
+            "required": [
+              "customer_number",
+              "product_sku",
+              "quantity",
+              "action"
+            ],
+            "additionalProperties": false
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "event_type": {
+            "const": "checkout"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "type": "object",
+            "properties": {
+              "customer_number": {
+                "type": "string"
+              },
+              "order_number": {
+                "type": "string"
+              },
+              "total_amount": {
+                "type": "number",
+                "minimum": 0
+              },
+              "currency_code": {
+                "type": "string",
+                "const": "USD"
+              }
+            },
+            "required": [
+              "customer_number",
+              "order_number",
+              "total_amount",
+              "currency_code"
+            ],
+            "additionalProperties": false
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "event_type": {
+            "const": "payment_status"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "type": "object",
+            "properties": {
+              "order_number": {
+                "type": "string"
+              },
+              "payment_status": {
+                "type": "string",
+                "enum": [
+                  "pending",
+                  "succeeded",
+                  "failed"
+                ]
+              },
+              "amount": {
+                "type": "number",
+                "minimum": 0
+              },
+              "currency_code": {
+                "type": "string",
+                "const": "USD"
+              }
+            },
+            "required": [
+              "order_number",
+              "payment_status",
+              "amount",
+              "currency_code"
+            ],
+            "additionalProperties": false
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "event_type": {
+            "const": "order_status"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "type": "object",
+            "properties": {
+              "order_number": {
+                "type": "string"
+              },
+              "previous_status": {
+                "type": "string",
+                "enum": [
+                  "pending",
+                  "paid",
+                  "shipped",
+                  "delivered",
+                  "cancelled"
+                ]
+              },
+              "new_status": {
+                "type": "string",
+                "enum": [
+                  "pending",
+                  "paid",
+                  "shipped",
+                  "delivered",
+                  "cancelled"
+                ]
+              }
+            },
+            "required": [
+              "order_number",
+              "previous_status",
+              "new_status"
+            ],
+            "additionalProperties": false
+          }
+        }
+      }
+    }
+  ],
+  "additionalProperties": false
+}

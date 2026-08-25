@@ -1,0 +1,148 @@
+contract_version: "1.0.0"
+
+source:
+  name: "retailpulse_events"
+  type: "event_stream"
+  purpose: "Define synthetic retail behavioral and order-related events for future streaming ingestion."
+  owner: "retailpulse"
+  environment: "local"
+
+entity:
+  name: "retail_event"
+  grain: "One row/message represents one event occurrence."
+
+keys:
+  primary_key: []
+  business_key: []
+  event_id: "event_id"
+  batch_id: null
+
+schema:
+  fields:
+    - name: "event_id"
+      type: "string"
+      nullable: false
+      description: "Unique identifier for one event."
+      allowed_values: []
+      example: "550e8400-e29b-41d4-a716-446655440000"
+
+    - name: "event_type"
+      type: "string"
+      nullable: false
+      description: "Type of retail event."
+      allowed_values:
+        - "click"
+        - "cart"
+        - "checkout"
+        - "payment_status"
+        - "order_status"
+      example: "click"
+
+    - name: "schema_version"
+      type: "string"
+      nullable: false
+      description: "Version of the event schema."
+      allowed_values:
+        - "1.0.0"
+      example: "1.0.0"
+
+    - name: "event_time"
+      type: "datetime"
+      nullable: false
+      description: "UTC timestamp when the event occurred."
+      allowed_values: []
+      example: "2026-08-25T18:00:00Z"
+
+    - name: "producer"
+      type: "string"
+      nullable: false
+      description: "System or component that produced the event."
+      allowed_values: []
+      example: "retailpulse_web"
+
+    - name: "payload"
+      type: "object"
+      nullable: false
+      description: "Event-specific data validated according to event_type."
+      allowed_values: []
+      example: null
+
+timestamps:
+  created_at: null
+  updated_at: null
+  event_time: "event_time"
+  timezone: "UTC"
+
+schema_versioning:
+  current_version: "1.0.0"
+  compatibility_policy: "Backward-compatible additions may be introduced without changing existing required field semantics."
+  breaking_change_policy: "Breaking changes require a new schema version and corresponding producer and consumer updates."
+
+delivery:
+  mode: "event_stream"
+  cadence: "event_driven"
+  format: "json"
+  pagination: null
+  rate_limit: null
+  timeout_seconds: null
+  retry_policy: "Defined during the future streaming implementation."
+  cache_policy: null
+
+quality:
+  required_fields:
+    - "event_id"
+    - "event_type"
+    - "schema_version"
+    - "event_time"
+    - "producer"
+    - "payload"
+  unique_fields:
+    - "event_id"
+  null_policy: "Required envelope fields must not be null."
+  validity_rules:
+    - "event_id must use UUID format"
+    - "event_type must use a supported event type"
+    - "schema_version must use a supported schema version"
+    - "event_time must use date-time format"
+    - "payload must satisfy the rules for its event_type"
+  freshness_expectation: "No production freshness SLA in Phase 1; event_time represents the actual event occurrence time."
+
+failure_and_recovery:
+  failure_modes:
+    - "missing required field"
+    - "unsupported schema version"
+    - "invalid event type"
+    - "invalid event-specific payload"
+    - "duplicate event_id"
+    - "late-arriving event"
+  retryable_errors: []
+  duplicate_behavior: "Events with the same event_id represent duplicates and must not produce duplicate downstream effects."
+  replay_expectation: "Replayed events must retain the original event_id so downstream processing can remain idempotent."
+
+security:
+  classification: "synthetic"
+  contains_pii: false
+  synthetic_or_public: "synthetic retail events"
+  secret_requirements: "No secrets are stored in event payloads or committed samples."
+  retention_policy: "Phase 1 event schema and sample events may be versioned in the repository."
+
+metadata:
+  source_system: "RetailPulse synthetic event source"
+  ingestion_timestamp: null
+  event_id_or_batch_id: "event_id"
+  source_offset_or_source_file: null
+  schema_version: "schema_version"
+  pipeline_run_id: null
+  record_hash: null
+  event_timestamp: "event_time"
+
+samples:
+  sample_file: "streaming/sample_valid_event.json"
+  downstream_consumers:
+    - "Phase 1 event contract validation"
+    - "planned streaming implementation"
+
+limitations:
+  - "No real-time event producer is implemented in Phase 1."
+  - "No Kinesis producer or consumer is implemented in Phase 1."
+  - "Duplicate and late-event behavior is defined contractually but not simulated as a streaming system in Phase 1."
