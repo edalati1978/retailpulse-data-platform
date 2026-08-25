@@ -93,4 +93,47 @@ Status: Complete
 - Pytest verifies each sample row has the expected field count from the official `tpcds.sql` DDL.
 - TPC-DS tests currently pass: 3 passed.
 - Large generated TPC-DS data and toolkit artifacts remain local/ignored rather than committed to Git.
+## Package 3 — PostgreSQL OLTP — COMPLETE
 
+PostgreSQL OLTP source implementation is complete.
+
+Completed artifacts:
+
+- `postgres/schema.sql`
+- `postgres/seed.py`
+- `postgres/generated/`
+- `postgres/sample_queries.sql`
+- `postgres/update_scenarios.sql`
+- `docs/data-contracts/postgres-oltp.yaml`
+- PostgreSQL OLTP section added to `docs/data-contracts/data-dictionary.md`
+
+Validated:
+
+- deterministic seed generation with seed `42`
+- 100 customers
+- 50 inventory products
+- 500 orders
+- 1483 order items
+- PostgreSQL schema creation
+- deterministic seed load
+- order-total reconciliation
+- foreign-key integrity
+- sample queries
+- customer update scenario
+- order-status update scenario
+- inventory update scenario
+
+Relevant commits:
+
+- `29cae72` — PostgreSQL OLTP schema and deterministic seed data
+- `f52a435` — Ruff fixes for seed generator
+- `7f1bf0e` — PostgreSQL OLTP sample queries
+- `3c55330` — PostgreSQL OLTP update scenarios
+- `497fcc8` — PostgreSQL OLTP data contract
+- `bd81a55` — PostgreSQL OLTP data dictionary
+
+Next Phase 1 package:
+
+**Package 4 — Events / JSON Schema**
+
+Do not redo Package 3 work unless a later change requires re-validation.
