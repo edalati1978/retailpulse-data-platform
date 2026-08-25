@@ -137,3 +137,54 @@ Next Phase 1 package:
 **Package 4 — Events / JSON Schema**
 
 Do not redo Package 3 work unless a later change requires re-validation.
+## Package 4 — Event Schema & Contract — COMPLETE
+
+Event source definition for future streaming is complete.
+
+Completed artifacts:
+
+- `streaming/event.schema.json`
+- `streaming/sample_valid_event.json`
+- `streaming/sample_invalid_event.json`
+- `docs/data-contracts/events.yaml`
+- Event section added to `docs/data-contracts/data-dictionary.md`
+- `jsonschema==4.26.0` added to development dependencies in `pyproject.toml`
+
+Defined event types:
+
+- `click`
+- `cart`
+- `checkout`
+- `payment_status`
+- `order_status`
+
+Common event envelope:
+
+- `event_id`
+- `event_type`
+- `schema_version`
+- `event_time`
+- `producer`
+- `payload`
+
+Validated:
+
+- valid event accepted by JSON Schema
+- event without `event_id` rejected
+- unsupported `schema_version` rejected
+
+Phase 1 scope decisions:
+
+- no real-time producer implemented yet
+- no Kinesis producer or consumer implemented yet
+- duplicate and late-event behavior defined contractually for future streaming work
+
+Relevant commit:
+
+- `3863dd9` — RetailPulse event schema and contract
+
+Next Phase 1 package:
+
+**Package 5 — NOAA GSOD + Open-Meteo**
+
+Do not redo Package 4 unless a later schema change requires re-validation.
