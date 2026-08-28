@@ -4,7 +4,9 @@ version = "0.1.0"
 description = "RetailPulse AWS data engineering platform"
 readme = "README.md"
 requires-python = ">=3.12,<3.13"
-dependencies = []
+dependencies = [
+    "requests==2.34.2",
+]
 
 [project.optional-dependencies]
 dev = [

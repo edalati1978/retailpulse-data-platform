@@ -11,3 +11,4 @@ data/local/
 /tpcds/sample/*.dat
 /tpcds/tools-v4.0.0/
 /tpcds/TPC-DS_Tools_v4.0.0.zip
+weather/cache/

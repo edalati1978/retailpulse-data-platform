@@ -185,6 +185,58 @@ Relevant commit:
 
 Next Phase 1 package:
 
-**Package 5 — NOAA GSOD + Open-Meteo**
+**Package 5 — Weather / Open-Meteo**
 
 Do not redo Package 4 unless a later schema change requires re-validation.
+
+## Package 5 — Weather / Open-Meteo — COMPLETE
+
+Open-Meteo is the only implemented weather source for RetailPulse.
+
+NOAA GSOD was evaluated as an alternative but is not implemented in the current project scope.
+
+Completed artifacts:
+
+- `weather/open_meteo_client.py`
+- `weather/README.md`
+- `weather/fixtures/open_meteo_sample.json`
+- `docs/data-contracts/open-meteo.yaml`
+- `tests/test_open_meteo.py`
+- `requests==2.34.2` added to project dependencies
+- `weather/cache/` excluded from Git
+
+Implemented client behavior:
+
+- daily historical weather requests
+- UTC daily aggregation
+- configurable request timeout
+- retry for timeout and connection failures
+- retry for HTTP 429, 500, 502, 503, and 504
+- exponential retry delay
+- immediate failure for non-retryable HTTP errors
+- deterministic local cache by location and date range
+- cache hit avoids unnecessary API calls
+
+Selected daily variables:
+
+- `temperature_2m_max`
+- `temperature_2m_min`
+- `precipitation_sum`
+- `weather_code`
+
+Validated:
+
+- request parameters are built correctly
+- cache hit returns cached data without calling the API
+- retryable HTTP failure triggers retry
+- successful API response is returned and written to cache
+- non-retryable HTTP error does not retry
+- Open-Meteo tests: 5 passed
+- full project tests: 9 passed
+- Ruff checks pass for Open-Meteo client and tests
+
+Next Phase 1 package:
+
+**Package 6 — Unified contracts, data dictionary, and sample pack**
+
+Do not redo Package 5 unless a later requirement requires re-validation.

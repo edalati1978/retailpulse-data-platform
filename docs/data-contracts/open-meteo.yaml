@@ -1,0 +1,164 @@
+contract_version: "1.0.0"
+
+source:
+  name: "open_meteo"
+  type: "rest_api"
+  purpose: "Provide historical daily weather enrichment for RetailPulse."
+  owner: "retailpulse"
+  environment: "external_public_api"
+
+entity:
+  name: "daily_weather"
+  grain: "One logical record represents one geographic location and one calendar date."
+
+keys:
+  primary_key: []
+  business_key:
+    - "latitude"
+    - "longitude"
+    - "date"
+  event_id: null
+  batch_id: null
+
+schema:
+  fields:
+    - name: "date"
+      type: "date"
+      nullable: false
+      description: "Calendar date of the weather observation."
+      allowed_values: []
+      example: "2025-01-15"
+
+    - name: "latitude"
+      type: "number"
+      nullable: false
+      description: "Latitude of the location used for weather enrichment."
+      allowed_values: []
+      example: 34.0522
+
+    - name: "longitude"
+      type: "number"
+      nullable: false
+      description: "Longitude of the location used for weather enrichment."
+      allowed_values: []
+      example: -118.2437
+
+    - name: "temperature_2m_max"
+      type: "number"
+      nullable: false
+      description: "Maximum daily air temperature at 2 meters above ground."
+      unit: "°C"
+      allowed_values: []
+      example: 24.1
+
+    - name: "temperature_2m_min"
+      type: "number"
+      nullable: false
+      description: "Minimum daily air temperature at 2 meters above ground."
+      unit: "°C"
+      allowed_values: []
+      example: 11.8
+
+    - name: "precipitation_sum"
+      type: "number"
+      nullable: false
+      description: "Total precipitation accumulated during the calendar day."
+      unit: "mm"
+      allowed_values: []
+      example: 0.0
+
+    - name: "weather_code"
+      type: "integer"
+      nullable: false
+      description: "Daily weather condition represented using the WMO weather interpretation code."
+      allowed_values: []
+      example: 1
+
+timestamps:
+  created_at: null
+  updated_at: null
+  event_time: null
+  timezone: "UTC"
+
+schema_versioning:
+  current_version: "1.0.0"
+  compatibility_policy: "Backward-compatible source additions may be accepted if existing required field semantics remain unchanged."
+  breaking_change_policy: "Renamed, removed, or semantically changed required fields require contract review and a new major version."
+
+delivery:
+  mode: "api"
+  cadence: "on_demand"
+  format: "json"
+  pagination: null
+  rate_limit: "Subject to Open-Meteo API usage policy."
+  timeout_seconds: 10
+  retry_policy: "Retry transient connection failures, timeouts, HTTP 429, and selected retryable HTTP 5xx responses (500, 502, 503, 504) with bounded exponential backoff."
+  cache_policy: "Successful responses may be cached locally by location and requested date range to avoid unnecessary repeated API requests."
+
+quality:
+  required_fields:
+    - "date"
+    - "latitude"
+    - "longitude"
+    - "temperature_2m_max"
+    - "temperature_2m_min"
+    - "precipitation_sum"
+    - "weather_code"
+  unique_fields: []
+  null_policy: "Selected weather fields must be present for accepted daily weather records."
+  validity_rules:
+    - "latitude must be between -90 and 90"
+    - "longitude must be between -180 and 180"
+    - "temperature_2m_min must not exceed temperature_2m_max"
+    - "precipitation_sum must be greater than or equal to zero"
+    - "weather_code must be interpreted according to WMO weather codes"
+  freshness_expectation: "Historical weather is requested for the date range required by downstream enrichment."
+
+failure_and_recovery:
+  failure_modes:
+    - "request timeout"
+    - "connection failure"
+    - "HTTP 429 response"
+    - "HTTP 5xx response"
+    - "invalid request parameters"
+    - "unexpected response structure"
+  retryable_errors:
+    - "timeout"
+    - "connection failure"
+    - "HTTP 429"
+    - "HTTP 500"
+    - "HTTP 502"
+    - "HTTP 503"
+    - "HTTP 504"
+  duplicate_behavior: "Repeated requests for the same location and date range should not create duplicate downstream weather records."
+  replay_expectation: "The same historical request may be replayed safely and may use a cached response when available."
+
+security:
+  classification: "public"
+  contains_pii: false
+  synthetic_or_public: "public weather data"
+  secret_requirements: "No API key or credential is required for the selected Open-Meteo usage."
+  retention_policy: "Small fixtures may be versioned in the repository. Runtime cache files are not committed."
+
+metadata:
+  source_system: "Open-Meteo Historical Weather API"
+  ingestion_timestamp: null
+  event_id_or_batch_id: null
+  source_offset_or_source_file: null
+  schema_version: null
+  pipeline_run_id: null
+  record_hash: null
+  event_timestamp: "date"
+
+samples:
+  sample_file: "weather/fixtures/open_meteo_sample.json"
+  downstream_consumers:
+    - "future weather ingestion pipeline"
+    - "future dim_weather transformation"
+    - "RetailPulse fulfillment and cancellation analysis"
+
+limitations:
+  - "Open-Meteo is an external public API and availability is outside RetailPulse control."
+  - "The API may return coordinates representing the selected weather grid point rather than the exact requested coordinates."
+  - "Only selected daily weather variables are included in the RetailPulse contract."
+  - "Cloud ingestion and warehouse loading are not implemented in Phase 1."
