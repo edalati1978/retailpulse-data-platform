@@ -1,5 +1,7 @@
 ﻿# Phase 1 Source Inventory
 
+Active Phase 1 sources: 4
+
 ## TPC-DS Toolkit
 
 - Source type: Batch benchmark data
@@ -15,7 +17,7 @@
 - Purpose: Simulate customer, order, order-item, and inventory changes
 - Entity and grain: One row per customer, order, order item, or inventory record
 - Keys: Relational primary keys, foreign keys, and business keys
-- Update behavior: Inserts and updates with created_at and updated_at timestamps
+- Update behavior: Inserts occur across the OLTP tables; updates are modeled for customers, orders, and inventory and are tracked with updated_at. order_items currently has created_at only.
 - Limitations: Locally generated synthetic operational data; CDC is not implemented in Phase 1
 
 ## Python Event Source
@@ -27,20 +29,18 @@
 - Update behavior: Append-only events; duplicate and late-event behavior is documented only
 - Limitations: Kinesis and controlled event generation are outside Phase 1
 
-## NOAA GSOD on AWS
-
-- Source type: Public S3 dataset
-- Purpose: Historical weather enrichment
-- Entity and grain: One weather observation for a station and observation date
-- Keys: Station identifier and observation date
-- Update behavior: Published historical files and periodic additions
-- Limitations: Public-source structure must be analyzed; cloud ingestion is outside Phase 1
-
 ## Open-Meteo REST API
 
 - Source type: REST API
-- Purpose: Weather enrichment and API-client practice
-- Entity and grain: One response contains weather values for a location and requested time range
-- Keys: Location coordinates, date or timestamp, and requested variables
-- Update behavior: Request-based responses with retry, timeout, and cache behavior
-- Limitations: API availability, rate behavior, and response changes must be handled
+- Purpose: Provide historical daily weather enrichment for RetailPulse
+- Entity and grain: One logical record represents one geographic location and one calendar date
+- Business key: latitude, longitude, and date
+- Update behavior: Historical data is requested on demand with timeout, retry, and local cache behavior
+- Replay behavior: Repeated requests for the same location and date range may be replayed safely and should not create duplicate downstream weather records
+- Limitations: External public API; only selected daily weather variables are included; cloud ingestion and warehouse loading are outside Phase 1
+
+## Evaluated Alternative
+
+### NOAA GSOD on AWS
+
+NOAA GSOD was evaluated as a possible historical weather source during Phase 1 but was not implemented. Open-Meteo is the selected and implemented weather source for the current RetailPulse design.

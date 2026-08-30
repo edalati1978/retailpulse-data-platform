@@ -448,3 +448,25 @@
 | order_number | string | No |
 | previous_status | string | No |
 | new_status | string | No |
+
+## Open-Meteo Daily Weather
+
+**Source:** Open-Meteo Historical Weather API (`docs/data-contracts/open-meteo.yaml`)
+
+**Grain:** One logical record represents one geographic location and one calendar date.
+
+**Business key:** Composite key: `latitude`, `longitude`, `date`
+
+| Field | Type | Nullable | Description |
+|---|---|---|---|
+| date | date | No | Calendar date of the weather observation. |
+| latitude | number | No | Latitude of the location used for weather enrichment. |
+| longitude | number | No | Longitude of the location used for weather enrichment. |
+| temperature_2m_max | number | No | Maximum daily air temperature at 2 meters above ground. |
+| temperature_2m_min | number | No | Minimum daily air temperature at 2 meters above ground. |
+| precipitation_sum | number | No | Total precipitation accumulated during the calendar day. |
+| weather_code | integer | No | Daily weather condition represented using the WMO weather interpretation code. |
+
+**Timezone:** UTC
+
+**Sample:** `weather/fixtures/open_meteo_sample.json`

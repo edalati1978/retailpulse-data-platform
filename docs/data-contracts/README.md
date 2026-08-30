@@ -7,7 +7,6 @@
   - tpcds.yaml
   - postgres-oltp.yaml
   - events.yaml
-  - noaa-gsod.yaml
   - open-meteo.yaml
 - Field names use snake_case.
 - File names and field names must be written in English.

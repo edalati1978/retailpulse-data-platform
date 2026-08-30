@@ -240,3 +240,40 @@ Next Phase 1 package:
 **Package 6 — Unified contracts, data dictionary, and sample pack**
 
 Do not redo Package 5 unless a later requirement requires re-validation.
+
+## Package 6 - Unified Contracts, Data Dictionary, and Sample Pack - COMPLETE
+
+Active Phase 1 sources: 4
+
+- TPC-DS
+- PostgreSQL OLTP
+- Python Events
+- Open-Meteo
+
+NOAA GSOD remains documented only as an evaluated alternative and is not an active or implemented source.
+
+Package 6 audit completed:
+
+- contract top-level structure and naming are consistent across all four active sources
+- metadata requirements were reviewed and reconciled with source-provided versus future pipeline-generated metadata
+- grain and key semantics were verified for all active sources
+- PostgreSQL update semantics were corrected to reflect `updated_at` only for customers, orders, and inventory
+- event duplicate, replay, schema-version, and event-time semantics were verified
+- Open-Meteo replay, cache, and business-key semantics were verified
+- TPC-DS regeneration and batch semantics were verified
+- sample references for all active sources were verified
+- Open-Meteo daily weather fields were added to the data dictionary
+- stale `noaa-gsod.yaml` example was removed from the data-contract conventions README
+- NOAA references were retained only where explicitly documented as an evaluated alternative
+- missing Description columns in older dictionary sections were reviewed and are not treated as a Package 6 blocker
+
+Validation evidence:
+
+- `git diff --check` passed
+- full project tests: 9 passed
+
+Next Phase 1 package:
+
+**Package 7 - Tests, controlled failure, and demo**
+
+Do not redo Package 6 unless a later requirement requires re-validation.
